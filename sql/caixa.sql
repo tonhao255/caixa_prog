@@ -103,6 +103,44 @@ CREATE TABLE caixa (
 
 
 
+CREATE TABLE `unidade_medida` (
+  `cod_unidade` int(11) NOT NULL,
+  `nome_unidade` varchar(50) NOT NULL,
+  `sigla_unidade` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Despejando dados para a tabela `unidade_medida`
+--
+
+INSERT INTO `unidade_medida` (`cod_unidade`, `nome_unidade`, `sigla_unidade`) VALUES
+(1, 'Quilograma', 'kg'),
+(2, 'Grama', 'g'),
+(3, 'Litro', 'L'),
+(4, 'Mililitro', 'mL'),
+(5, 'Metro', 'm'),
+(6, 'Centímetro', 'cm'),
+(7, 'Unidade', 'un'),
+(8, 'Caixa', 'cx'),
+(9, 'Pacote', 'pct'),
+(10, 'Dúzia', 'dz'),
+(11, 'Par', 'par'),
+(12, 'Tonelada', 't'),
+(13, 'Galão', 'gal'),
+(14, 'Barril', 'bbl'),
+(15, 'Fardo', 'fd'),
+(16, 'Cartela', 'ctl'),
+(17, 'Frasco', 'fr'),
+(18, 'Garrafa', 'gf'),
+(19, 'Lata', 'lt'),
+(20, 'Saco', 'sc'),
+(21, 'Envelope', 'env'),
+(22, 'Bandeja', 'bdj'),
+(23, 'Pote', 'pt'),
+(24, 'Vidro', 'vd'),
+(25, 'Bloco', 'bl'),
+(26, 'Kit', 'kit');
+
 
 
 -- =====================================================================

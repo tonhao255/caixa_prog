@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 900px; margin: 40px auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="color: #333;">Unidades de Medida</h2>
+    <a href="{{ url_for('nova_unidade') }}" 
+      style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: bold;">
+      + Nova Unidade
+    </a>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <thead>
+      <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+        <th style="padding: 10px;">ID</th>
+        <th style="padding: 10px;">Nome</th>
+        <th style="padding: 10px;">Sigla</th>
+        <th style="padding: 10px;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for unidade in unidades %}
+      <tr style="border-bottom: 1px solid #dee2e6;">
+        <td style="padding: 10px;">{{ unidade.cod_unidade }}</td>
+        <td style="padding: 10px;">{{ unidade.nome_unidade }}</td>
+        <td style="padding: 10px;">{{ unidade.sigla_unidade }}</td>
+        <td style="padding: 10px;">
+          <a href="{{ url_for('editar_unidade', id=unidade.cod_unidade) }}" 
+            style="color: #007bff; text-decoration: none; font-weight: bold;">Editar</a> |
+          <a href="{{ url_for('excluir_unidade', id=unidade.cod_unidade) }}" 
+            onclick="return confirm('Deseja excluir esta unidade?')" 
+            style="color: #dc3545; text-decoration: none; font-weight: bold;">Excluir</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" style="text-align: center; padding: 15px; color: #666;">Nenhuma unidade cadastrada.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

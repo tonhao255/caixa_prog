@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 500px; margin: 40px auto; padding: 25px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  <h2 style="text-align: center; color: #333; margin-bottom: 25px;">{{ acao }} Unidade de Medida</h2>
+
+  <form method="POST">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Nome:</label>
+    <input type="text" name="nome_unidade" value="{{ unidade.nome_unidade if unidade else '' }}" required 
+      style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px;">
+
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Sigla:</label>
+    <input type="text" name="sigla_unidade" value="{{ unidade.sigla_unidade if unidade else '' }}" required
+      style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 25px;">
+
+    <div style="display: flex; justify-content: space-between;">
+      <button type="submit" 
+        style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+        Salvar
+      </button>
+
+      <a href="{{ url_for('listar_unidades') }}" 
+        style="background-color: #6c757d; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold;">
+        Voltar
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -24,7 +24,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': '',
-    'database': 'caixa'  # Nome do banco de dados utilizado.
+    'database': 'caixa_prog'  # Nome do banco de dados utilizado.
 }
 
 # =====================================================================
@@ -160,6 +160,69 @@ def logout():
     flash("Você saiu da sua conta.", "sucesso")
     return redirect(url_for('login'))
 
+# ==========================
+# UNIDADES DE MEDIDA - CRUD
+# ==========================
+
+@app.route('/sistema/admin/unidades')
+def listar_unidades():
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM unidade_medida")
+    unidades = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('unidades.html', unidades=unidades)
+
+@app.route('/sistema/admin/unidades/nova', methods=['GET', 'POST'])
+def nova_unidade():
+    if request.method == 'POST':
+        nome = request.form['nome_unidade']
+        sigla = request.form['sigla_unidade']
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO unidade_medida (nome_unidade, sigla_unidade) VALUES (%s, %s)",
+            (nome, sigla)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return redirect(url_for('listar_unidades'))
+    return render_template('unidades_form.html', acao='Nova')
+
+@app.route('/sistema/admin/unidades/editar/<int:id>', methods=['GET', 'POST'])
+def editar_unidade(id):
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        nome = request.form['nome_unidade']
+        sigla = request.form['sigla_unidade']
+        cursor.execute(
+            "UPDATE unidade_medida SET nome_unidade=%s, sigla_unidade=%s WHERE cod_unidade=%s",
+            (nome, sigla, id)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return redirect(url_for('listar_unidades'))
+
+    cursor.execute("SELECT * FROM unidade_medida WHERE cod_unidade = %s", (id,))
+    unidade = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return render_template('unidades_form.html', unidade=unidade, acao='Editar')
+
+@app.route('/sistema/admin/unidades/excluir/<int:id>')
+def excluir_unidade(id):
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM unidade_medida WHERE cod_unidade = %s", (id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return redirect(url_for('listar_unidades'))
 
 # =====================================================================
 # SEÇÃO 5: ÁREA ADMINISTRATIVA (/sistema/admin/)
@@ -172,7 +235,6 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/sistema/admin')
 def index():
     """ Rota raiz do admin, que apenas redireciona para o dashboard. """
     return redirect(url_for('admin.dashboard'))
-
 
 @admin_bp.route('/dashboard')
 @admin_required
@@ -489,3 +551,6 @@ if __name__ == '__main__':
     # e mostra mensagens de erro detalhadas no navegador. É muito útil para desenvolvimento.
     # Lembre-se de desativar (mudar para False) em um ambiente de produção.
     app.run(debug=True)
+
+from sistema.admin.unidades import unidades_bp
+app.register_blueprint(unidades_bp)

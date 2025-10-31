@@ -56,3 +56,28 @@ body {
     border-radius: 5px;
     margin-bottom: 10px;
 }
+
+table {
+  border-collapse: collapse;
+  margin: 20px auto;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+th, td {
+  padding: 10px 15px;
+  text-align: center;
+}
+th {
+  background: #eee;
+}
+.btn {
+  display: inline-block;
+  background: #0084ff;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.btn:hover {
+  background: #005fcc;
+}

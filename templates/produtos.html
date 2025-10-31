@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-800">Gerenciar Produtos</h2>
+    <a href="{{ url_for('admin.cadastrar_produto') }}" 
+       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+        <i class="fas fa-plus mr-2"></i>Novo Produto
+    </a>
+</div>
+
+<!-- Grid de produtos -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+  {% for produto in produtos %}
+  <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition duration-300">
+    <!-- Cabeçalho do produto -->
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="text-xl font-bold text-gray-800">{{ produto.nome_produto }}</h3>
+      {% if produto.ativo %}
+      <span class="px-3 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Ativo</span>
+      {% else %}
+      <span class="px-3 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded-full">Inativo</span>
+      {% endif %}
+    </div>
+
+    <!-- Descrição -->
+    <p class="text-gray-600 text-sm mb-4">{{ produto.descricao_produto or "Sem descrição." }}</p>
+
+    <!-- Informações principais -->
+    <div class="grid grid-cols-2 gap-x-4 text-sm text-gray-700">
+      <p><strong>Preço Compra:</strong> R$ {{ produto.preco_compra }}</p>
+      <p><strong>Preço Venda:</strong> R$ {{ produto.preco_venda }}</p>
+      <p><strong>Estoque:</strong> {{ produto.quantidade }} {{ produto.sigla_unidade or '' }}</p>
+      <p><strong>Categoria:</strong> {{ produto.nome_categoria }}</p>
+      <p><strong>PVP:</strong> {{ produto.nome_pvp }}</p>
+      
+    </div>
+
+    <!-- Data de criação -->
+    <p class="text-xs text-gray-500 mt-3">Criado em: {{ produto.data_criacao.strftime('%d/%m/%Y %H:%M') }}</p>
+
+    <!-- CÓDIGO DE BARRAS IRADO-->
+    <div class="flex flex-col items-center mt-3"><span class="barcode text-4xl">*{{ produto.codigo_barras }}*</span><p>{{ produto.codigo_barras }}</p></div>
+    
+    <!-- Botões -->
+    <div class="mt-4 flex justify-end space-x-3">
+      <a href="{{ url_for('admin.editar_produto', cod=produto.cod_produto) }}" 
+          class="text-blue-500 hover:text-blue-700 transition" title="Editar">
+          <i class="fas fa-pencil-alt"></i>
+      </a>
+      <form action="{{ url_for('admin.excluir_produto', cod=produto.cod_produto) }}" method="POST" 
+            onsubmit="return confirm('Tem certeza que deseja excluir este produto?');" class="inline-block">
+          <button type="submit" class="text-red-500 hover:text-red-700 transition" title="Excluir">
+              <i class="fas fa-trash-alt"></i>
+          </button>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <p class="text-gray-600 text-center col-span-2">Nenhum produto cadastrado ainda.</p>
+  {% endfor %}
+</div>
+{% endblock %}

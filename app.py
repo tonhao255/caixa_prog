@@ -24,7 +24,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': '',
-    'database': 'caixa_prog'  # Nome do banco de dados utilizado.
+    'database': 'caixa'  # Nome do banco de dados utilizado.
 }
 
 # =====================================================================
@@ -536,6 +536,125 @@ def excluir_categoria(cod):
     except mysql.connector.Error as err:
         flash(f"Erro ao excluir categoria: {err}", "erro")
     return redirect(url_for('admin.categorias'))
+
+# =====================================================================
+# SEÇÃO: PRODUTOS
+# =====================================================================
+
+@admin_bp.route('/produtos')
+@admin_required
+def produtos():
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT p.*, c.nome_categoria, v.nome_pvp
+        FROM produto p
+        LEFT JOIN categoria_produto c ON p.cod_categoria = c.cod_categoria
+        LEFT JOIN pvp v ON p.cod_pvp = v.cod_pvp
+    """)
+    produtos = cursor.fetchall()
+    conn.close()
+    return render_template('produtos.html', produtos=produtos)
+
+
+@admin_bp.route('/produtos/novo', methods=['GET', 'POST'])
+@admin_required
+def cadastrar_produto():
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+
+    # Carrega categorias e PVPs para o select
+    cursor.execute("SELECT cod_categoria, nome_categoria FROM categoria_produto WHERE 1")
+    categorias = cursor.fetchall()
+
+    cursor.execute("SELECT cod_pvp, nome_pvp FROM pvp WHERE ativo = TRUE")
+    pvps = cursor.fetchall()
+
+    cursor.execute("SELECT cod_unidade, nome_unidade, sigla_unidade FROM unidade_medida")
+    unidades = cursor.fetchall()
+
+    if request.method == 'POST':
+        nome = request.form['nome_produto']
+        descricao = request.form['descricao_produto']
+        preco_compra = request.form['preco_compra']
+        preco_venda = request.form['preco_venda']
+        quantidade = request.form['quantidade']
+        unidade = request.form['cod_unidade'] or None
+        codigo = request.form['codigo_barras']
+        categoria = request.form['cod_categoria']
+        pvp = request.form['cod_pvp']
+        ativo = 1 if 'ativo' in request.form else 0
+
+        cursor.execute("""
+            INSERT INTO produto 
+            (nome_produto, descricao_produto, preco_compra, preco_venda, quantidade, cod_unidade, codigo_barras, cod_categoria, cod_pvp, ativo)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        """, (nome, descricao, preco_compra, preco_venda, quantidade, unidade, codigo, categoria, pvp, ativo))
+        conn.commit()
+        conn.close()
+        flash('Produto cadastrado com sucesso!', 'sucesso')
+        return redirect(url_for('admin.produtos'))
+
+    conn.close()
+    return render_template('cadastrar_produto.html', categorias=categorias, pvps=pvps, unidades=unidades)
+
+
+@admin_bp.route('/produtos/editar/<int:cod>', methods=['GET', 'POST'])
+@admin_required
+def editar_produto(cod):
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+
+    # Carrega dados do produto
+    cursor.execute("SELECT * FROM produto WHERE cod_produto = %s", (cod,))
+    produto = cursor.fetchone()
+
+    # Carrega categorias e PVPs para o select
+    cursor.execute("SELECT cod_categoria, nome_categoria FROM categoria_produto")
+    categorias = cursor.fetchall()
+    cursor.execute("SELECT cod_pvp, nome_pvp FROM pvp")
+    pvps = cursor.fetchall()
+
+    cursor.execute("SELECT cod_unidade, nome_unidade, sigla_unidade FROM unidade_medida")
+    unidades = cursor.fetchall()
+
+    if request.method == 'POST':
+        nome = request.form['nome_produto']
+        descricao = request.form['descricao_produto']
+        preco_compra = request.form['preco_compra']
+        preco_venda = request.form['preco_venda']
+        quantidade = request.form['quantidade']
+        unidade = request.form['cod_unidade'] or None
+        codigo = request.form['codigo_barras']
+        categoria = request.form['cod_categoria']
+        pvp = request.form['cod_pvp']
+        ativo = 1 if 'ativo' in request.form else 0
+
+        cursor.execute("""
+            UPDATE produto
+            SET nome_produto=%s, descricao_produto=%s, preco_compra=%s, preco_venda=%s, 
+                quantidade=%s, cod_unidade=%s, codigo_barras=%s, cod_categoria=%s, cod_pvp=%s, ativo=%s
+            WHERE cod_produto=%s
+        """, (nome, descricao, preco_compra, preco_venda, quantidade, unidade, codigo, categoria, pvp, ativo, cod))
+        conn.commit()
+        conn.close()
+        flash('Produto atualizado com sucesso!', 'sucesso')
+        return redirect(url_for('admin.produtos'))
+
+    conn.close()
+    return render_template('editar_produto.html', produto=produto, categorias=categorias, pvps=pvps, unidades=unidades)
+
+
+@admin_bp.route('/produtos/excluir/<int:cod>', methods=['POST'])
+@admin_required
+def excluir_produto(cod):
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM produto WHERE cod_produto = %s", (cod,))
+    conn.commit()
+    conn.close()
+    flash('Produto excluído com sucesso!', 'sucesso')
+    return redirect(url_for('admin.produtos'))
 
 # =====================================================================
 # SEÇÃO 6: REGISTRO DO BLUEPRINT E EXECUÇÃO

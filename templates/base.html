@@ -6,6 +6,7 @@
     <title>{% block title %}Sistema caixa{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">
     <style>
         .sidebar-link {
             display: flex;
@@ -23,6 +24,11 @@
             width: 1.5rem; /* 24px */
             margin-right: 0.75rem; /* 12px */
         }
+        .barcode {
+        font-family: 'Libre Barcode 39', cursive;
+        font-size: 36px;
+        letter-spacing: 2px;
+        }   
     </style>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
@@ -38,11 +44,11 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="" class="sidebar-link {% if 'produtos' in request.path %}active{% endif %}">
+                <a href="{{ url_for('admin.produtos') }}" class="sidebar-link {% if 'produtos' in request.path %}active{% endif %}">
                     <i class="fas fa-box-open"></i>
                     <span>Produtos</span>
                 </a>
-                <a href="" class="sidebar-link {% if 'categorias' in request.path %}active{% endif %}">
+                <a href="{{ url_for('admin.categorias') }}" class="sidebar-link {% if 'categorias' in request.path %}active{% endif %}">
                     <i class="fas fa-tags"></i>
                     <span>Categorias</span>
                 </a>
@@ -50,11 +56,11 @@
                     <i class="fas fa-tags"></i>
                     <span>Usuarios</span>
                 </a>
-                <a href="{{ url_for('admin.pvps') }}" class="sidebar-link {% if 'usuarios' in request.path %}active{% endif %}">
+                <a href="{{ url_for('admin.pvps') }}" class="sidebar-link {% if 'pvps' in request.path %}active{% endif %}">
                     <i class="fas fa-tags"></i>
                     <span>PVP</span>
                 </a>
-                <a href="{{ url_for('listar_unidades') }}" class="sidebar-link {% if 'usuarios' in request.path %}active{% endif %}">
+                <a href="{{ url_for('listar_unidades') }}" class="sidebar-link {% if 'unidades' in request.path %}active{% endif %}">
                     <i class="fas fa-tags"></i>
                     <span>Unidades de Medida</span>
                 </a>

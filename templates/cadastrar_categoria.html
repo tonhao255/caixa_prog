@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>➕ Cadastrar Categoria</h2>
+
+<form method="POST">
+  <div class="mb-3">
+    <label>Nome</label>
+    <input type="text" name="nome_categoria" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label>Descrição</label>
+    <textarea name="descricao_categoria" class="form-control"></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label>PVP</label>
+    <select name="pvp_categoria" class="form-control">
+      <option value="">Nenhum</option>
+      {% for p in pvps %}
+        <option value="{{ p.cod_pvp }}">{{ p.nome_pvp }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-success">Salvar</button>
+  <a href="{{ url_for('admin.categorias') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

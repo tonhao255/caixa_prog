@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>📂 Categorias</h2>
+<a href="{{ url_for('admin.cadastrar_categoria') }}" class="btn btn-primary mb-3">+ Nova Categoria</a>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Descrição</th>
+      <th>PVP</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in categorias %}
+    <tr>
+      <td>{{ c.nome_categoria }}</td>
+      <td>{{ c.descricao_categoria or '-' }}</td>
+      <td>{{ c.nome_pvp or '-' }}</td>
+      <td>
+        <a href="{{ url_for('admin.editar_categoria', cod=c.cod_categoria) }}" class="btn btn-sm btn-warning">Editar</a>
+        <form action="{{ url_for('admin.excluir_categoria', cod=c.cod_categoria) }}" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Excluir esta categoria?')">Excluir</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

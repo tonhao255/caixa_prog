@@ -551,6 +551,3 @@ if __name__ == '__main__':
     # e mostra mensagens de erro detalhadas no navegador. É muito útil para desenvolvimento.
     # Lembre-se de desativar (mudar para False) em um ambiente de produção.
     app.run(debug=True)
-
-from sistema.admin.unidades import unidades_bp
-app.register_blueprint(unidades_bp)
